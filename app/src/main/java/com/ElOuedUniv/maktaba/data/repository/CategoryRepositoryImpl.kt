@@ -33,10 +33,10 @@ class CategoryRepositoryImpl : CategoryRepository {
 )
     
     override fun getAllCategories(): List<Category> {
-        TODO("Not yet implemented")
+    return categoriesList
     }
 
     override fun getCategoryById(id: String): Category? {
-        TODO("Not yet implemented")
+    return categoriesList.find { it.id == id }
     }
 }
