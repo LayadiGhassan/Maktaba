@@ -74,6 +74,11 @@ fun CategoryList(
     categories: List<Category>,
     modifier: Modifier = Modifier
 ) {
+    Text(
+    text = "Total Categories: ${categories.size}",
+    style = MaterialTheme.typography.titleMedium,
+    modifier = Modifier.padding(16.dp)
+    )
     LazyColumn(
         modifier = modifier,
         contentPadding = PaddingValues(16.dp),
