@@ -13,11 +13,8 @@ class BookViewModel(
     private val getBooksUseCase: GetBooksUseCase
 ) : ViewModel() {
 
-    private val _books = MutableStateFlow<List<Book>>(emptyList())
-    val books: StateFlow<List<Book>> = _books.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    private val _uiState = MutableStateFlow(BookUiState())
+    val uiState: StateFlow<BookUiState> = _uiState.asStateFlow()
 
     init {
         loadBooks()
@@ -25,12 +22,17 @@ class BookViewModel(
 
     private fun loadBooks() {
         viewModelScope.launch {
-            _isLoading.value = true
+            
+            _uiState.update { it.copy(isLoading = true) }
+            
             try {
                 val bookList = getBooksUseCase()
-                _books.value = bookList
-            } finally {
-                _isLoading.value = false
+                _uiState.update { it.copy(
+                    books = bookList,
+                    isLoading = false
+                )}
+            } catch (e: Exception) {
+                _uiState.update { it.copy(isLoading = false) }
             }
         }
     }
@@ -39,4 +41,3 @@ class BookViewModel(
         loadBooks()
     }
 }
-
