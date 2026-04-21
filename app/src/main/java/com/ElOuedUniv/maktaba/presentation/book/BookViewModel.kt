@@ -64,12 +64,17 @@ class BookViewModel @Inject constructor(
                 _uiState.update { it.copy(isAddingBook = false) }
             }
             is BookUiAction.OnAddBookConfirm -> {
-                // TODO: Call AddBookUseCase and hide dialog
-                
+                // TODO: Call AddBookUseCase and hide dialog ✅
+                viewModelScope.launch {
+                    addBookUseCase(Book(isbn = action.isbn, title = action.title, nbPages = action.nbPages))
+                    _uiState.update { it.copy(isAddingBook = false) }
+                    loadBooks()
+                    _uiEvent.emit(BookUiEvent.ShowSnackbar("Book added successfully"))
+                }
             }
         }
     }
-
+    
     fun refreshBooks() {
         loadBooks()
     }
