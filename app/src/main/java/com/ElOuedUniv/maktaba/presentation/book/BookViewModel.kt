@@ -17,12 +17,10 @@ import javax.inject.Inject
 class BookViewModel @Inject constructor(
     private val getBooksUseCase: GetBooksUseCase
 ) : ViewModel() {
-
-    private val _books = MutableStateFlow<List<Book>>(emptyList())
-    val books: StateFlow<List<Book>> = _books.asStateFlow()
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> = _isLoading.asStateFlow()
+    
+    /** ¹ ✅ */
+    private val _uiState = MutableStateFlow(BookUiState())
+    val uiState: StateFlow<BookUiState> = _uiState.asStateFlow()
 
     init {
         loadBooks()
@@ -30,13 +28,22 @@ class BookViewModel @Inject constructor(
 
     fun loadBooks() {
         viewModelScope.launch {
-            _isLoading.value = true
-                getBooksUseCase().catch {
-                    _isLoading.value = false
-                }.collect { bookList ->
-                    _books.value = bookList
-                    _isLoading.value = false
+
+            /** ¹ ✅ */
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            try {
+                getBooksUseCase().collect { bookList ->
+                    _uiState.value = _uiState.value.copy(
+                        books = bookList,
+                        isLoading = false
+                    )
                 }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message
+                )
+            }
 
         }
     }
@@ -48,13 +55,16 @@ class BookViewModel @Inject constructor(
         when (action) {
             BookUiAction.RefreshBooks -> refreshBooks()
             BookUiAction.OnAddBookClick -> {
-                // TODO: Set isAddingBook = true in your uiState
+                // TODO: Set isAddingBook = true in your uiState ✅ 
+                _uiState.value = _uiState.value.copy(isAddingBook = true)
             }
             BookUiAction.OnDismissAddBook -> {
-                // TODO: Set isAddingBook = false
+                // TODO: Set isAddingBook = false ✅ 
+                _uiState.value = _uiState.value.copy(isAddingBook = false)
             }
             is BookUiAction.OnAddBookConfirm -> {
-                // TODO: Call AddBookUseCase and hide dialog
+                // TODO: Call AddBookUseCase and hide dialog 
+               
             }
         }
     }
