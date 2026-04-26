@@ -8,7 +8,7 @@ class AddBookUseCase @Inject constructor(
     private val bookRepository: BookRepository
 ) {
     suspend operator fun invoke(book: Book) {
-        // TODO: Exercise 3 - Call the repository to add the book
-        bookRepository.addbook(book)
+        // TODO: Exercise 3 - Call the repository to add the book ✅
+        bookRepository.addBook(book)
     }
 }
