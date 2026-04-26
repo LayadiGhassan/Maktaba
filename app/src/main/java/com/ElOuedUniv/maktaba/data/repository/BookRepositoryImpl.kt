@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class BookRepositoryImpl @Inject constructor() : BookRepository {
 
-    private val _booksList = mutablelistOf(
+    private val _booksList = mutableListOf(
         Book(isbn = "11111", title = "Clean Code", nbPages = 10),
         Book(isbn = "22222", title = "The Pragmatic Programmer", nbPages = 0),
         Book(isbn = "33333", title = "Design Patterns", nbPages = 0),
