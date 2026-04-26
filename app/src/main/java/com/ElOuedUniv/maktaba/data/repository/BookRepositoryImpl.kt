@@ -32,8 +32,12 @@ class BookRepositoryImpl @Inject constructor() : BookRepository {
     }
 
     override fun addBook(book: Book) {
-        // TODO: Exercise 2 - Implement adding a book to the list and emitting the new list
+        // TODO: Exercise 2 - Implement adding a book to the list and emitting the new list ✅
         // Hint: This is a bit tricky with sharedFlow, think about how to update it.
+         // Add book to the internal list
+        _booksList.add(book)
+        // Emit the updated list
+        booksFlow.emit(_booksList.toList()) 
     }
 }
 
