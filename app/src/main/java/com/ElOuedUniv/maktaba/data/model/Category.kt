@@ -1,6 +1,7 @@
 package com.ElOuedUniv.maktaba.data.model
 
 // TODO: Complete the Category data class implementation
+@Serializable
 data class Category(
     val id: String,
     val name: String,
