@@ -13,21 +13,26 @@ import com.ElOuedUniv.maktaba.presentation.onboarding.OnboardingView
 
 @Composable
 fun NavGraph(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
+    isOnboardingCompleted: Boolean 
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Onboarding.route
+        
+        startDestination = if (isOnboardingCompleted) Screen.BookList.route else Screen.Onboarding.route
     ) {
+        
         composable(Screen.Onboarding.route) {
             OnboardingView(
                 onNavigateToLibrary = {
                     navController.navigate(Screen.BookList.route) {
+                        
                         popUpTo(Screen.Onboarding.route) { inclusive = true }
                     }
                 }
             )
         }
+        
         
         composable(Screen.BookList.route) {
             BookListView(
@@ -39,13 +44,16 @@ fun NavGraph(
             )
         }
         
+    
         composable(Screen.BookDetail.route) {
             BookDetailView(onBackClick = { navController.popBackStack() })
         }
         
+        
         composable(Screen.CategoryList.route) {
             CategoryListView(onBackClick = { navController.popBackStack() })
         }
+        
         
         composable(Screen.AddBook.route) {
             AddBookView(onBackClick = { navController.popBackStack() })
