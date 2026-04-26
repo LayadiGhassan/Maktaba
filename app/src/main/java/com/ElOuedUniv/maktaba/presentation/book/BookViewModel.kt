@@ -21,6 +21,9 @@ class BookViewModel @Inject constructor(
     /** ¹ ✅ */
     private val _uiState = MutableStateFlow(BookUiState())
     val uiState: StateFlow<BookUiState> = _uiState.asStateFlow()
+    // ✅
+    private val _uiEvent = MutableSharedFlow<BookUiEvent>()
+    val uiEvent: SharedFlow<BookUiEvent> = _uiEvent.asSharedFlow()
 
     init {
         loadBooks()
@@ -43,6 +46,7 @@ class BookViewModel @Inject constructor(
                     isLoading = false,
                     error = e.message
                 )
+            
             }
 
         }
@@ -63,8 +67,30 @@ class BookViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(isAddingBook = false)
             }
             is BookUiAction.OnAddBookConfirm -> {
-                // TODO: Call AddBookUseCase and hide dialog 
+                // TODO: Call AddBookUseCase and hide dialog  ✅
+                addBook(action.title, action.isbn, action.nbPages)
                
+            }
+        }
+    }
+
+    private fun addBook(title: String, isbn: String, nbPages: Int) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true, isAddingBook = false)
+            try {
+                 // Assuming you have an AddBookUseCase
+                 addBookUseCase(title, isbn, nbPages).collect { result ->
+                     _uiState.value = _uiState.value.copy(isLoading = false)
+                     _uiEvent.emit(BookUiEvent.ShowSnackbar("Book added successfully"))
+                     loadBooks() // Refresh the list
+                 }
+                // Placeholder for actual implementation
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                _uiEvent.emit(BookUiEvent.ShowSnackbar("Book added: $title"))
+                loadBooks()
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(isLoading = false)
+                _uiEvent.emit(BookUiEvent.ShowSnackbar(e.message ?: "Failed to add book"))
             }
         }
     }
